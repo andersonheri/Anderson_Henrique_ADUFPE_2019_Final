@@ -110,7 +110,6 @@ mylogit <- glm(felicidade ~ esquerda + inflacao + desemprego + homem +
 summary(mylogit)
 
 #Modelo interativo de pessoas que se identifica com "Esquerda"
-
 mylogit1 <- glm(felicidade ~ esquerda + inflacao + desemprego + homem +
                   econ_geral_fac + econ_ind_fac + esquerda*desemprego,
                 family = "binomial", data = data_final)
@@ -159,6 +158,49 @@ stargazer(mylogit,mylogit1, mylogit2, mylogit3, mylogit4, type="text",
           single.row=FALSE,
           notes.append = FALSE,
           header=FALSE)
+
+
+# ============ Calculo do Efeito Marginal e Erro Padrao =============
+
+#Instalar os pacotes necessarios
+if(require(mfx) == F) install.packages('mfx'); require(mfx) #Calcular efeito marginal
+if(require(ggeffects) == F) install.packages('ggeffects'); require(ggeffects) #Plotar o efeito marginal
+
+
+## Calcular o efeito Marginal e Erro padrão do Modelo 2 (Esquerda*Desemprego)
+
+logitmfx(formula= felicidade ~ esquerda + inflacao + desemprego + homem +
+           econ_geral_fac + econ_ind_fac + esquerda*desemprego, data = data_final,
+         atmean = TRUE)
+
+#Plotar o efeito marginal do Modelo 2
+
+m <- glm(felicidade ~ direita + inflacao + desemprego + homem +
+           econ_geral_fac + econ_ind_fac + esquerda*desemprego, data = data_final)
+
+p <- ggpredict(m, c("esquerda", "desemprego"))
+
+plot(p)
+
+
+
+## Calcular o Efeito Marginal e Erro padrão do Modelo 2 (Direita*Inflacao)
+
+logitmfx(formula = felicidade ~ direita + inflacao + desemprego + homem +
+  econ_geral_fac + econ_ind_fac + direita*inflacao, data = data_final)
+
+
+
+#Plotar o efeito marginal do Modelo 4
+
+a <- glm(felicidade ~ direita + inflacao + desemprego + homem +
+           econ_geral_fac + econ_ind_fac + direita*inflacao, data = data_final)
+
+b <- ggpredict(a, c("direita", "inflacao"))
+
+plot(b)
+
+
 
 
 #============= Testes de Robustes dos modelos de Regressao Logistica ============
