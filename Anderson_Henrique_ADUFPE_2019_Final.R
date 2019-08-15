@@ -99,7 +99,8 @@ table(data_final$desemprego)
 
 
 #============== Elaboracao do modelo multivariado de Regressao Logistica ==============
-
+#Retirar notacao científica
+options(scipen=999)
 
 #Modelo de pessoas que se identifica com "Esquerda"
 mylogit <- glm(felicidade ~ esquerda + inflacao + desemprego + homem +
