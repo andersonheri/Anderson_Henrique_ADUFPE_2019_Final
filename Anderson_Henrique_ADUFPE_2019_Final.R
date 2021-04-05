@@ -25,13 +25,13 @@ load("data_final.RData")
 
 #========= Produção das análises descritivas =======
 
-#Pacotes
+# Pacotes
 
 if(require(ggplot2) == F) install.packages('ggplot2'); require(ggplot2)
 if(require(GGally) == F) install.packages('GGally'); require(GGally)
 
 
-# Apendix - Grafico 1
+# Apendice - Grafico 1
 
 # Porcentagem de homens e Mulheres
 #Tranformar a informacao em porcentagem
@@ -41,7 +41,8 @@ a <- transform(a, percentage = ave(Freq, FUN = function(x) as.numeric(paste0(rou
 a$Var1 <- ifelse(a$Var1 == 1, "Homem",
                  ifelse(a$Var1 == 0, "Mulher", 0))
 
-#Grafico
+# Grafico
+                                   
 ggplot(a, aes(x=Var1, y=percentage), xlab = "") + 
   scale_y_continuous(limits=c(0,100), expand = c(0,0)) +
   geom_bar(position=position_dodge(), stat="identity", width=.5) +theme_minimal() +
@@ -49,7 +50,9 @@ ggplot(a, aes(x=Var1, y=percentage), xlab = "") +
   geom_text(aes(label=percentage), vjust=-0.1)
 
 table(data_final$homem)
-# Apendix - Grafico 2
+                                   
+# Apendice - Grafico 2
+                                   
 # Percentagem Ideologia
 #Porcentagem de ideologia
 
@@ -60,7 +63,7 @@ b$Var1 <- ifelse(b$Var1 == 1, "Direita",
 
 
 
-#Gráfico
+# Grafico
 
 ggplot(b, aes(x=Var1, y=percentage), xlab = "Sexo") + 
   scale_y_continuous(limits=c(0,100), expand = c(0,0)) +
@@ -70,9 +73,10 @@ ggplot(b, aes(x=Var1, y=percentage), xlab = "Sexo") +
 
 
 
-# Apendix - Grafico 3
-#Percentagem de Felicidade
-#Percentagem de pessoas que se consideram felizes
+# Apendice - Grafico 3
+                                   
+# Percentagem de Felicidade
+# Percentagem de pessoas que se consideram felizes
 
 c <- as.data.frame(ftable(data_final$felicidade))
 c <- transform(c, percentage = ave(Freq, FUN = function(x) as.numeric(paste0(round(x/sum(x), 3)*100))))
@@ -80,7 +84,8 @@ c$Var1 <- ifelse(c$Var1 == 1, "Felizes",
                  ifelse(c$Var1 == 0, "Infelizes", 0))
 
 
-
+# Grafico
+                                   
 ggplot(c, aes(x=Var1, y=percentage), xlab = "") + 
   scale_y_continuous(limits=c(0,100), expand = c(0,0)) +
   geom_bar(position=position_dodge(), stat="identity", width=.5) +theme_minimal() +
@@ -89,9 +94,9 @@ ggplot(c, aes(x=Var1, y=percentage), xlab = "") +
 
 
 
-#Descritiva da quantidade de pessoas que se preocupam com Inflação e Desemprego
+# Descritiva da quantidade de pessoas que se preocupam com Inflação e Desemprego
 
-#Quantidade de pessoas que se preocupam com a inflacao 
+# Quantidade de pessoas que se preocupam com a inflacao 
 table(data_final$inflacao)
 
 #Quantidade de pessoas que se preocupam com a desemprego 
@@ -99,10 +104,11 @@ table(data_final$desemprego)
 
 
 #============== Elaboracao do modelo multivariado de Regressao Logistica ==============
-#Retirar notacao científica
+                                   
+# Retirar notacao científica
 options(scipen=999)
 
-#Modelo de pessoas que se identifica com "Esquerda"
+# Modelo de pessoas que se identifica com "Esquerda"
 mylogit <- glm(felicidade ~ esquerda + inflacao + desemprego + homem +
                  econ_geral_fac + econ_ind_fac,
                family = "binomial", data = data_final)
@@ -110,7 +116,7 @@ mylogit <- glm(felicidade ~ esquerda + inflacao + desemprego + homem +
 
 summary(mylogit)
 
-#Modelo interativo de pessoas que se identifica com "Esquerda"
+# Modelo interativo de pessoas que se identifica com "Esquerda"
 mylogit1 <- glm(felicidade ~ esquerda + inflacao + desemprego + homem +
                   econ_geral_fac + econ_ind_fac + esquerda*desemprego,
                 family = "binomial", data = data_final)
@@ -119,7 +125,7 @@ mylogit1 <- glm(felicidade ~ esquerda + inflacao + desemprego + homem +
 summary(mylogit1)
 
 
-#Modelo de pessoas que se identifica com "Direita"
+# Modelo de pessoas que se identifica com "Direita"
 
 mylogit2 <- glm(felicidade ~ direita + inflacao + desemprego + homem +
                   econ_geral_fac + econ_ind_fac,
@@ -127,7 +133,7 @@ mylogit2 <- glm(felicidade ~ direita + inflacao + desemprego + homem +
 
 summary(mylogit2)
 
-#Modelo interativo de pessoas que se identifica com "Direita"
+# Modelo interativo de pessoas que se identifica com "Direita"
 
 
 mylogit3 <- glm(felicidade ~ direita + inflacao + desemprego + homem +
@@ -146,12 +152,12 @@ mylogit4 <- glm(felicidade ~ direita + esquerda + inflacao + desemprego + homem 
 
 summary(mylogit4)
 
-#Comparar ambos os modelos  
+# Comparar ambos os modelos  
 
 #Abrir pacote de comparacao e visualizacao dos modelos
 if(require(stargazer) == F) install.packages('stargazer'); require(stargazer)
 
-#Execução da funcao
+# Execução da funcao
 stargazer(mylogit,mylogit1, mylogit2, mylogit3, mylogit4, type="text", 
           column.labels = c("Esquerda", " Esquerda*Desemprego",
                             "Direita", "Direita*Inflação", "Todos"),
@@ -163,7 +169,7 @@ stargazer(mylogit,mylogit1, mylogit2, mylogit3, mylogit4, type="text",
 
 # ============ Calculo do Efeito Marginal e Erro Padrao =============
 
-#Instalar os pacotes necessarios
+# Instalar os pacotes necessarios
 if(require(mfx) == F) install.packages('mfx'); require(mfx) #Calcular efeito marginal
 if(require(ggeffects) == F) install.packages('ggeffects'); require(ggeffects) #Plotar o efeito marginal
 
@@ -174,7 +180,7 @@ logitmfx(formula= felicidade ~ esquerda + inflacao + desemprego + homem +
            econ_geral_fac + econ_ind_fac + esquerda*desemprego, data = data_final,
          atmean = TRUE)
 
-#Plotar o efeito marginal do Modelo 2
+# Plotar o efeito marginal do Modelo 2
 
 m <- glm(felicidade ~ direita + inflacao + desemprego + homem +
            econ_geral_fac + econ_ind_fac + esquerda*desemprego, data = data_final)
@@ -192,7 +198,7 @@ logitmfx(formula = felicidade ~ direita + inflacao + desemprego + homem +
 
 
 
-#Plotar o efeito marginal do Modelo 4
+# Plotar o efeito marginal do Modelo 4
 
 a <- glm(felicidade ~ direita + inflacao + desemprego + homem +
            econ_geral_fac + econ_ind_fac + direita*inflacao, data = data_final)
@@ -204,11 +210,11 @@ plot(b)
 
 
 
-#============= Testes de Robustes dos modelos de Regressao Logistica ============
+# ============= Testes de Robustes dos modelos de Regressao Logistica ============
 
 
-#Testes de predição do modelo - Escore otimo, Teste de concordancia,
-#Erro de classificação incorreta e Roc Curve.
+# Testes de predição do modelo - Escore otimo, Teste de concordancia,
+# Erro de classificação incorreta e Roc Curve.
 
 #Carregar pacotes necessarios
 if(require(tidyverse) == F) install.packages('tidyverse'); require(tidyverse)
@@ -223,19 +229,19 @@ if(require(InformationValue) == F) install.packages('InformationValue'); require
 #Estimar os valores preditos do modelo de Regressao Logistica
 predicted <- predict(mylogit, data_final, type="response") 
 
-#Optimal Score
+# Optimal Score
 optCutOff <- optimalCutoff(data_final$felicidade, predicted)[1] 
 optCutOff
 
-#teste de Concordancia do banco de dados
+# teste de Concordancia do banco de dados
 Concordance(data_final$felicidade, predicted)
 
 
-#Teste de Sensitividade e Especificidade do banco de dados
+# Teste de Sensitividade e Especificidade do banco de dados
 #Sensitividade
 sensitivity(data_final$felicidade, predicted, threshold = optCutOff)
 
-#Especificidade
+# Especificidade
 specificity(data_final$felicidade, predicted, threshold = optCutOff)
 
 
@@ -250,22 +256,22 @@ plotROC(data_final$felicidade, predicted) #Gráfico
 
 ## Teste de Robustes - Modelo 2
 
-#Estimar os valores preditos do modelo de Regressao Logistica
+# Estimar os valores preditos do modelo de Regressao Logistica
 predicted1 <- predict(mylogit1, data_final, type="response") 
 
-#Optimal Score
+# Optimal Score
 optCutOff <- optimalCutoff(data_final$felicidade, predicted1)[1] 
 optCutOff
 
-#teste de Concordancia do banco de dados
+# teste de Concordancia do banco de dados
 Concordance(data_final$felicidade, predicted1)
 
 
-#Teste de Sensitividade e Especificidade do banco de dados
+# Teste de Sensitividade e Especificidade do banco de dados
 #Sensitividade
 sensitivity(data_final$felicidade, predicted1, threshold = optCutOff)
 
-#Especificidade
+# Especificidade
 specificity(data_final$felicidade, predicted1, threshold = optCutOff)
 
 
@@ -273,17 +279,17 @@ specificity(data_final$felicidade, predicted1, threshold = optCutOff)
 # do modelo
 misClassError(data_final$felicidade, predicted1, threshold = optCutOff)
 
-#ROC Curve do modelo de RL
+# ROC Curve do modelo de RL
 plotROC(data_final$felicidade, predicted1) #Gráfico
 
 ## Modelo 3
 
 ## Teste de Robustes - Modelo 3
 
-#Estimar os valores preditos do modelo de Regressao Logistica
+# Estimar os valores preditos do modelo de Regressao Logistica
 predicted2 <- predict(mylogit2, data_final, type="response") 
 
-#Optimal Score
+# Optimal Score
 optCutOff <- optimalCutoff(data_final$felicidade, predicted2)[1] 
 optCutOff
 
@@ -291,8 +297,8 @@ optCutOff
 Concordance(data_final$felicidade, predicted2)
 
 
-#Teste de Sensitividade e Especificidade do banco de dados
-#Sensitividade
+# Teste de Sensitividade e Especificidade do banco de dados
+# Sensitividade
 sensitivity(data_final$felicidade, predicted2, threshold = optCutOff)
 
 #Especificidade
@@ -318,15 +324,15 @@ predicted3 <- predict(mylogit3, data_final, type="response")
 optCutOff <- optimalCutoff(data_final$felicidade, predicted3)[1] 
 optCutOff
 
-#teste de Concordancia do banco de dados
+# teste de Concordancia do banco de dados
 Concordance(data_final$felicidade, predicted3)
 
 
-#Teste de Sensitividade e Especificidade do banco de dados
-#Sensitividade
+# Teste de Sensitividade e Especificidade do banco de dados
+# Sensitividade
 sensitivity(data_final$felicidade, predicted3, threshold = optCutOff)
 
-#Especificidade
+# Especificidade
 specificity(data_final$felicidade, predicted3, threshold = optCutOff)
 
 
@@ -334,29 +340,29 @@ specificity(data_final$felicidade, predicted3, threshold = optCutOff)
 # do modelo
 misClassError(data_final$felicidade, predicted3, threshold = optCutOff)
 
-#ROC Curve do modelo de RL
+# ROC Curve do modelo de RL
 plotROC(data_final$felicidade, predicted3) #Gráfico
 
 ## Modelo 5
 
 ## Teste de Robustes - Modelo 5
 
-#Estimar os valores preditos do modelo de Regressao Logistica
+# Estimar os valores preditos do modelo de Regressao Logistica
 predicted4 <- predict(mylogit4, data_final, type="response") 
 
-#Optimal Score
+# Optimal Score
 optCutOff <- optimalCutoff(data_final$felicidade, predicted4)[1] 
 optCutOff
 
-#teste de Concordancia do banco de dados
+# teste de Concordancia do banco de dados
 Concordance(data_final$felicidade, predicted4)
 
 
-#Teste de Sensitividade e Especificidade do banco de dados
-#Sensitividade
+# Teste de Sensitividade e Especificidade do banco de dados
+# Sensitividade
 sensitivity(data_final$felicidade, predicted4, threshold = optCutOff)
 
-#Especificidade
+# Especificidade
 specificity(data_final$felicidade, predicted4, threshold = optCutOff)
 
 
@@ -364,6 +370,6 @@ specificity(data_final$felicidade, predicted4, threshold = optCutOff)
 # do modelo
 misClassError(data_final$felicidade, predicted4, threshold = optCutOff)
 
-#ROC Curve do modelo de RL
+# ROC Curve do modelo de RL
 plotROC(data_final$felicidade, predicted4) #Gráfico
 
